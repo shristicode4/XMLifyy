@@ -4,9 +4,39 @@ const fs = require("fs");
 const path = require("path");
 const pdfParse = require("pdf-parse");
 const xmlbuilder = require("xmlbuilder");
+const authRoutes = require("./routes/auth.route.js");
+const connectDB = require("./lib/db.js");
+require("./lib/db");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const app = express();
-const port = 3000;
+const cors = require("cors");
+//const port = 3000;
+
+const port = process.env.PORT || 3000;
+// Connect to MongoDB
+connectDB()
+  .then(() => {
+    console.log("✅ MongoDB connected successfully");
+  })
+  .catch((error) => {
+    console.error("❌ MongoDB connection error:", error.message);
+    process.exit(1); // Exit the process if the database connection fails
+  });
+
+// Middlewares
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+app.use("/auth", authRoutes);
 
 // Ensuring "uploads" and "files" folders exist
 const uploadDir = path.join(__dirname, "uploads");
@@ -70,6 +100,7 @@ app.post("/convertFile", upload.single("file"), async (req, res, next) => {
     res.json({
       message: "File converted successfully",
       downloadUrl: `/download/${path.basename(xmlOutPath)}`,
+      xmlContent: xmlString,
     });
   } catch (error) {
     console.error("❌ Error processing PDF:", error);

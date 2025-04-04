@@ -9,7 +9,7 @@ const History = () => {
     const fetchHistory = async () => {
       try {
         const res = await axios.get(
-          "${import.meta.env.VITE_API_BASE_URL}/history"
+          `${import.meta.env.VITE_API_BASE_URL}/history`
         );
         setHistory(res.data);
       } catch (error) {

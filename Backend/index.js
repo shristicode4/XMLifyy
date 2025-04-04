@@ -11,7 +11,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 // ✅ Connect to MongoDB
 connectDB()
@@ -34,7 +34,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: ["http://localhost:5173", "hhttps://xmlifyy.onrender.com"],
+    origin: ["http://localhost:5173", "https://xmlifyy.onrender.com"],
     credentials: true,
   })
 );

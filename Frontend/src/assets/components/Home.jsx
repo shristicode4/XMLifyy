@@ -1,15 +1,20 @@
 import React, { useState } from "react";
+//import { useState } from "react";
 import { FaFilePdf } from "react-icons/fa";
 import axios from "axios";
 import { Document, Page } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
-import { pdfjs } from "react-pdf";
-import workerSrc from "pdfjs-dist/build/pdf.worker.min.js?url";
+//import workerSrc from "pdfjs-dist/build/pdf.worker.min.js?url";
 import { useNavigate } from "react-router-dom";
+import "../../pdfWorker";
+
+//import { pdfjs } from "react-pdf";
+
+//pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 // Set PDF.js worker to the local file
-pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
+//pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
 
 // Set PDF.js worker
 //pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -51,6 +56,7 @@ function Home() {
 
       // Show XML preview
       setConvertedXML(xmlContent);
+      setPreviewType("xml");
 
       // an anchor tag to download the file
       const link = document.createElement("a");
@@ -64,7 +70,7 @@ function Home() {
       document.body.removeChild(link);
 
       setSelectedFile(null);
-      setConvert("File Converted Successfully");
+      setConvert("File Converted Successfully and downloaded!");
       setDownloadError("");
     } catch (error) {
       console.log(error);
@@ -73,11 +79,18 @@ function Home() {
     }
   };
 
-  const handleCopy = () => {
-    if (!convertedXML) return;
-    navigator.clipboard.writeText(convertedXML).then(() => {
+  const handleCopy = async () => {
+    if (!convertedXML) {
+      alert("No XML content to copy!");
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(convertedXML);
       alert("Copied to clipboard!");
-    });
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+      alert("Failed to copy to clipboard.");
+    }
   };
 
   const onDocumentLoadSuccess = ({ numPages }) => {
@@ -85,7 +98,7 @@ function Home() {
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-gradient-to-r from-blue-900 via-purple-900 to-black overflow-hidden flex flex-col">
+    <div className="relative w-full min-h-screen bg-gradient-to-r from-blue-900 via-purple-900 to-black overflow-auto flex flex-col">
       {/* Navbar */}
       <nav className="flex justify-between items-center px-8 py-4 bg-black text-white shadow-2xl">
         <h1 className="text-4xl font-extrabold text-indigo-600 tracking-tight mb-4 bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
@@ -113,30 +126,7 @@ function Home() {
           </button>
         </div>
       </nav>
-      {/* Bubble Animation */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-        {[...Array(20)].map((_, i) => {
-          const size = Math.random() * 40 + 20; // Random size between 20px and 60px
-          const top = Math.random() * 100 + "%";
-          const left = Math.random() * 100 + "%";
-          const animationDuration = Math.random() * 5 + 3 + "s";
 
-          return (
-            <div
-              key={i}
-              className="absolute rounded-full bg-gradient-to-r from-pink-500 to-purple-500 opacity-40 animate-bounce"
-              style={{
-                width: `${size}px`,
-                height: `${size}px`,
-                top,
-                left,
-                animationDuration,
-                animationTimingFunction: "ease-in-out",
-              }}
-            ></div>
-          );
-        })}
-      </div>
       {/* Main Wrapper  */}
       <div className="flex flex-col md:flex-row p-6 pt-10 items-start justify-center w-full min-h-screen px-6 md:px-20 py-6 space-y-6 md:space-y-0 md:space-x-6">
         {/* Main Content Box */}
@@ -191,10 +181,11 @@ function Home() {
         </div>
 
         {/* Preview Section - Moves Below Main on Mobile */}
+        {/* Preview Section */}
         <div
-          className="w-full md:w-2/4 min-h-[55vh]  p-6 pt-10 rounded-lg shadow-2xl border border-gray-600 flex flex-col items-center"
+          className="w-full md:w-2/4 min-h-[55vh] p-6 pt-10 rounded-lg shadow-2xl border border-gray-600 flex flex-col items-center"
           style={{
-            backgroundColor: "rgba(0, 0, 0, 0.8)", // Light pink background
+            backgroundColor: "rgba(0, 0, 0, 0.8)", // Transparent black background
             boxShadow:
               "10px 10px 30px rgba(0,0,0,0.6), -10px -10px 30px rgba(255,255,255,0.3)",
           }}
@@ -204,11 +195,11 @@ function Home() {
               Preview Section
             </h2>
 
-            {/* Button Group Centered */}
+            {/* Button Group */}
             <div className="flex justify-center space-x-4 mt-4">
               <button
                 onClick={() => setPreviewType("pdf")}
-                className={`px-3 py-2 text-sm rounded-lg ${
+                className={`px-3 py-2 text-sm rounded-lg cursor-pointer ${
                   previewType === "pdf"
                     ? "bg-blue-600 text-white"
                     : "bg-gray-300 text-gray-700"
@@ -218,7 +209,7 @@ function Home() {
               </button>
               <button
                 onClick={() => setPreviewType("xml")}
-                className={`px-3 py-2 text-sm rounded-lg ${
+                className={`px-3 py-2 text-sm rounded-lg cursor-pointer ${
                   previewType === "xml"
                     ? "bg-blue-600 text-white"
                     : "bg-gray-300 text-gray-700"
@@ -228,41 +219,67 @@ function Home() {
               </button>
             </div>
           </div>
-        </div>
-        {/* PDF Preview */}
-        {previewType === "pdf" && selectedFile && (
-          <div className="border border-gray-300 rounded-lg p-2 bg-white shadow-md">
-            <Document
-              file={selectedFile ? URL.createObjectURL(selectedFile) : ""}
-              onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-            >
-              {Array.from(new Array(numPages), (el, index) => (
-                <Page
-                  key={`page_${index + 1}`}
-                  pageNumber={index + 1}
-                  className="mb-2"
-                />
-              ))}
-            </Document>
-          </div>
-        )}
 
-        {/* XML Preview */}
-        {previewType === "xml" && convertedXML && (
-          <div>
-            <textarea
-              className="w-full h-40 p-2 border border-gray-300 rounded-lg text-sm bg-white shadow-md"
-              readOnly
-              value={convertedXML}
-            ></textarea>
-            <button
-              onClick={handleCopy}
-              className="mt-4 px-4 py-2 bg-purple-700 text-white rounded-lg shadow-md hover:bg-black transition-all duration-300"
-            >
-              Copy to Clipboard
-            </button>
-          </div>
-        )}
+          {/* PDF Preview */}
+          {previewType === "pdf" && selectedFile && (
+            <div className="border border-gray-300 rounded-lg p-2 bg-white shadow-md">
+              <Document
+                file={selectedFile ? URL.createObjectURL(selectedFile) : ""}
+                onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+              >
+                {Array.from(new Array(numPages), (el, index) => (
+                  <Page
+                    key={`page_${index + 1}`}
+                    pageNumber={index + 1}
+                    className="mb-2"
+                  />
+                ))}
+              </Document>
+            </div>
+          )}
+
+          {/* XML Preview */}
+          {previewType === "xml" && convertedXML && (
+            <div className="flex flex-col items-center w-full max-w-2xl mx-auto overflow-y-auto gap-4">
+              <textarea
+                className="w-full min-h-[250px] max-h-[500px] p-4 border border-gray-300 rounded-lg text-sm bg-white shadow-md text-black resize-none overflow-y-auto"
+                readOnly
+                value={convertedXML}
+              />
+              <button
+                onClick={handleCopy}
+                className="px-5 py-2 bg-purple-700 text-white rounded-lg shadow-md hover:bg-black transition-all duration-300 cursor-pointer relative z-10"
+              >
+                Copy to Clipboard
+              </button>
+            </div>
+          )}
+
+          {/* Bubble Animation 
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+            {[...Array(20)].map((_, i) => {
+              const size = Math.random() * 40 + 20; // Random size between 20px and 60px
+              const top = Math.random() * 100 + "%";
+              const left = Math.random() * 100 + "%";
+              const animationDuration = Math.random() * 5 + 3 + "s";
+
+              return (
+                <div
+                  key={i}
+                  className="absolute rounded-full bg-gradient-to-r from-pink-500 to-purple-500 opacity-40 animate-bounce"
+                  style={{
+                    width: `${size}px`,
+                    height: `${size}px`,
+                    top,
+                    left,
+                    animationDuration,
+                    animationTimingFunction: "ease-in-out",
+                  }}
+                ></div>
+              );
+            })}
+          </div>*/}
+        </div>
       </div>
     </div>
   );

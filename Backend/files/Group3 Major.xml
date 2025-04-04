@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+<document>
+  <content>Parala
+Maharaja Engineering College
+Group 3
+MAJOR PROJECT PRESENTATION-2025 
+Hardware Implementation of Face 
+Recognition System for Criminal 
+Identification using YOLO v8
+Group – 3
+Project Supervisor – 
+Dr. Dinesh kumar Dash
+Mr. Abinash Kumar Pala.
+Dept of ETC
+
+Parala
+ 
+Maharaja Engineering College
+MAJOR PROJECT PRESENTATION-2025 
+Members –
+•Manish Tripathy (2101109336)
+•Subhasish  Panda (2101109364)
+•Shristika Adhikari (2101109353)
+[2]
+Group 3
+
+Parala
+ 
+Maharaja Engineering College
+MAJOR PROJECT PRESENTATION-2025 
+AGENDA
+•Title of the project
+•Objectives of the project
+•Work done so far
+•Reference
+[3]
+Group 3
+
+Parala
+ 
+Maharaja Engineering College
+MAJOR PROJECT PRESENTATION-2025 
+OBJECTIVE OF THE PROJECT
+•We aim to develop a real-time hardware-based face 
+recognition system for criminal identification that 
+enhances accuracy and efficiency by integrating 
+deep learning models with embedded systems. 
+•The system will be designed for law enforcement 
+applications, ensuring secure and reliable suspect 
+identification. 
+[4]
+Group 3
+
+Parala
+ 
+Maharaja Engineering College
+MAJOR PROJECT PRESENTATION-2025 
+YOLO v8 and FaceNet based Recognition 
+Results
+[4]
+Group 3
+•fast and accurate face localization.
+Fig 1: Face detection using           
+YOLO v8  (Accuracy : 80.01%)
+Fig 2: Face recognition using YOLO v8 and 
+FaceNet (Accuracy : 93.21%)
+
+Parala
+ 
+Maharaja Engineering College
+MAJOR PROJECT PRESENTATION-2025 
+Yolo v8 – face detection and counting
+•Implemented YOLOv8 for real-time face detection.
+•The system detects faces in images or live video 
+streams and counts the total number of faces 
+detected in a given frame..
+•Optimized for fast and accurate face localization with 
+an accuracy of 96.67%.
+•Dataset used : Random Asian faces captured(2680)
+[4]
+Group 3
+•fast and accurate face localization.
+
+Parala
+ 
+Maharaja Engineering College
+MAJOR PROJECT PRESENTATION-2025 
+Workflow
+[4]
+Group 3
+•fast and accurate face localization.
+Fig 1: Working procedure of YOLO v8 counting system
+
+Parala
+ 
+Maharaja Engineering College
+MAJOR PROJECT PRESENTATION-2025 
+Results
+[4]
+Group 3
+•fast and accurate face localization.
+Fig 2: Output Fig 3: Epochs vs Accuracy graph
+
+Parala
+ 
+Maharaja Engineering College
+MAJOR PROJECT PRESENTATION-2025 
+Results
+[4]
+Group 3
+•fast and accurate face localization.
+Fig 4: Output graph plots
+
+Parala
+ 
+Maharaja Engineering College
+MAJOR PROJECT PRESENTATION-2025 
+[9]
+Group 3
+Police Station Record
+(Name, Email, Ph no. , 
+Latitude, Longitude)
+Find Nearest 
+police station
+Alert on mail
+Fetch record from 
+the server
+Database of 
+criminal records 
+and images
+Input video from 
+GPS enabled camera
+Division of 
+video into 
+frames
+Face detection in video 
+frames
+Face alignment
+Matching of detected faces with 
+database images
+Face 
+Recognition
+Find the location of 
+the criminal from 
+the location 
+coordinates of 
+camera
+Module 1: Database creation
+Module 2: Criminaldetectionand
+recognition
+Module 3: Alert generation
+Parallelly store the 
+location of each 
+identified criminal 
+in a file
+Fig 1 : Working procedure Criminal Faces Recognition
+
+Parala
+ 
+Maharaja Engineering College
+MAJOR PROJECT PRESENTATION-2025 
+Future Work
+[9]
+Group 3
+•We aim to deploy the model on FPGA.
+
+Parala
+ 
+Maharaja Engineering College
+MAJOR PROJECT PRESENTATION-2025 
+REFERENCE
+[10]
+Group 3
+[1] S. K. Jayasingh, P. Naik, S. Swain, K. J. Patra and M. R. Kabat, "Integrated 
+Crowd Counting System Utilizing IoT Sensors, OpenCV and YOLO Models for 
+Accurate People Density Estimation in Real-Time Environments,"2024 1st 
+International Conference on Cognitive, Green and Ubiquitous Computing (IC-
+CGU), Bhubaneswar, India, 2024, pp. 1-6.
+[2] Chenhao Yu, Junzhe Feng, Zhouzhou Zheng, Jiapan Guo, Yaohua Hu, “A 
+lightweight SOD-YOLOv5n model-based winter jujube detection and counting 
+method deployed on Android”,
+Computers and Electronics in Agriculture,Volume 218,2024,108701,ISSN 
+0168-169
+
+Parala
+ 
+Maharaja Engineering College
+MAJOR PROJECT PRESENTATION-2025 
+THANK YOU
+Group 3</content>
+</document>

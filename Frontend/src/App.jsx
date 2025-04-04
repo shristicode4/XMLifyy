@@ -8,9 +8,12 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
+import History from "./assets/components/History";
+import { useLocation } from "react-router-dom";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const location = useLocation();
 
   useEffect(() => {
     checkAuth();
@@ -27,7 +30,7 @@ const App = () => {
 
   return (
     <>
-      <Navbar />
+      {location.pathname !== "/" && <Navbar />}
       <Routes>
         <Route
           path="/"
@@ -40,6 +43,10 @@ const App = () => {
         <Route
           path="/login"
           element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/history"
+          element={authUser ? <History /> : <Navigate to="/login" />}
         />
       </Routes>
       <Footer />

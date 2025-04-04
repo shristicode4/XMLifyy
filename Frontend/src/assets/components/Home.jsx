@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 //import { useState } from "react";
 import { FaFilePdf } from "react-icons/fa";
 import axios from "axios";
 import { Document, Page } from "react-pdf";
+import { useAuthStore } from "@/store/useAuthStore";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 //import workerSrc from "pdfjs-dist/build/pdf.worker.min.js?url";
@@ -30,6 +31,9 @@ function Home() {
   const [numPages, setNumPages] = useState(null); // Track the number of pages in the PDF
 
   const navigate = useNavigate();
+  const authUser = useAuthStore((state) => state.authUser);
+  const logout = useAuthStore((state) => state.logout);
+
   const handleFileChange = (e) => {
     // console.log(e.target.files[0]);
     setSelectedFile(e.target.files[0]);
@@ -70,7 +74,7 @@ function Home() {
       document.body.removeChild(link);
 
       setSelectedFile(null);
-      setConvert("File Converted Successfully and downloaded!");
+      setConvert("File Converted and downloaded Successfully !");
       setDownloadError("");
     } catch (error) {
       console.log(error);
@@ -79,6 +83,11 @@ function Home() {
     }
   };
 
+  const handleLogout = async () => {
+    await logout();
+    localStorage.removeItem("authUser");
+    navigate("/signup");
+  };
   const handleCopy = async () => {
     if (!convertedXML) {
       alert("No XML content to copy!");
@@ -106,21 +115,21 @@ function Home() {
         </h1>
         <div className="flex space-x-6">
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/history")}
             className="px-6 py-3 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full shadow-md hover:shadow-lg focus:outline-none"
           >
             <span className="text-xl font-semibold text-pink-300 cursor-pointer hover:text-white transition-transform duration-300 hover:scale-110">
-              Home
+              History
               <span className="absolute inset-0 bg-white bg-opacity-20 rounded-full scale-0 group-hover:scale-100"></span>
             </span>
           </button>
 
           <button
-            onClick={() => navigate("/history")}
+            onClick={handleLogout}
             className="px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 rounded-full shadow-md hover:shadow-lg focus:outline-none"
           >
             <span className="text-xl font-semibold text-pink-300 cursor-pointer hover:text-white transition-transform duration-300 hover:scale-110">
-              History
+              Logout
               <span className="absolute inset-0 bg-white bg-opacity-20 rounded-full scale-0 group-hover:scale-100"></span>
             </span>
           </button>

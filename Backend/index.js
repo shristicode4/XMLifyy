@@ -6,30 +6,32 @@ const pdfParse = require("pdf-parse");
 const xmlbuilder = require("xmlbuilder");
 const authRoutes = require("./routes/auth.route.js");
 const connectDB = require("./lib/db.js");
-require("./lib/db");
-const dotenv = require("dotenv");
-dotenv.config();
+require("dotenv").config();
+const cors = require("cors");
+const mongoose = require("mongoose");
 
 const app = express();
-const cors = require("cors");
-//const port = 3000;
-
 const port = process.env.PORT || 3000;
-// Connect to MongoDB
+
+// ✅ Connect to MongoDB
 connectDB()
-  .then(() => {
-    console.log("✅ MongoDB connected successfully");
-  })
+  .then(() => console.log("✅ MongoDB connected successfully"))
   .catch((error) => {
     console.error("❌ MongoDB connection error:", error.message);
-    process.exit(1); // Exit the process if the database connection fails
+    process.exit(1);
   });
 
-// Middlewares
+// ✅ History schema and model
+const historySchema = new mongoose.Schema({
+  originalFileName: String,
+  xmlContent: String,
+  convertedAt: { type: Date, default: Date.now },
+});
+const History = mongoose.model("History", historySchema);
 
+// ✅ Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -38,14 +40,13 @@ app.use(
 );
 app.use("/auth", authRoutes);
 
-// Ensuring "uploads" and "files" folders exist
+// ✅ Ensure folders exist
 const uploadDir = path.join(__dirname, "uploads");
 const filesDir = path.join(__dirname, "files");
-
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 if (!fs.existsSync(filesDir)) fs.mkdirSync(filesDir, { recursive: true });
 
-//setting up of the file storage
+// ✅ Multer config
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadDir);
@@ -54,9 +55,10 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-
 const upload = multer({ storage: storage });
-app.post("/convertFile", upload.single("file"), async (req, res, next) => {
+
+// ✅ PDF to XML conversion
+app.post("/convertFile", upload.single("file"), async (req, res) => {
   console.log("📩 Request received!");
 
   if (!req.file) {
@@ -64,39 +66,28 @@ app.post("/convertFile", upload.single("file"), async (req, res, next) => {
     return res.status(400).json({ message: "No file uploaded" });
   }
 
-  console.log("✅ File received:");
-  console.log("   - Original Name:", req.file.originalname);
-  console.log("   - Saved As:", req.file.filename);
-  console.log("   - Path:", req.file.path);
-  console.log("   - MIME Type:", req.file.mimetype);
   try {
-    // Read the saved PDF file
     const pdfBuffer = fs.readFileSync(req.file.path);
-
-    //parse PDF Text
     const data = await pdfParse(pdfBuffer);
     const text = data.text.trim();
 
-    // Convert text to XML
     const xml = xmlbuilder.create("document");
     xml.ele("content", text);
-
-    // Convert XML to string
     const xmlString = xml.end({ pretty: true });
 
-    // Define XML output file path
-    let xmlOutPath = path.join(
+    const xmlOutPath = path.join(
       __dirname,
       "files",
       `${req.file.originalname.replace(/\.pdf$/i, ".xml")}`
     );
-
-    // Save XML to file
     fs.writeFileSync(xmlOutPath, xmlString, "utf8");
 
-    console.log("✅ XML file saved at", xmlOutPath);
+    // ✅ Save to DB history
+    await History.create({
+      originalFileName: req.file.originalname,
+      xmlContent: xmlString,
+    });
 
-    // Respond with file download link
     res.json({
       message: "File converted successfully",
       downloadUrl: `/download/${path.basename(xmlOutPath)}`,
@@ -108,12 +99,10 @@ app.post("/convertFile", upload.single("file"), async (req, res, next) => {
   }
 });
 
-// XML file download
-
+// ✅ Download route
 app.get("/download/:filename", (req, res) => {
   const xmlOutPath = path.join(__dirname, "files", req.params.filename);
 
-  // Check if file exists before download
   if (!fs.existsSync(xmlOutPath)) {
     return res.status(404).json({ message: "File not found" });
   }
@@ -128,7 +117,18 @@ app.get("/download/:filename", (req, res) => {
   });
 });
 
-//server start
+// ✅ History route
+app.get("/history", async (req, res) => {
+  try {
+    const allHistory = await History.find().sort({ convertedAt: -1 });
+    res.json(allHistory);
+  } catch (error) {
+    console.error("❌ Error fetching history:", error);
+    res.status(500).json({ error: "Error fetching history" });
+  }
+});
+
+// ✅ Start server
 app.listen(port, () => {
-  console.log(`🚀 server running on http://localhost:${port}`);
+  console.log(`🚀 Server running at http://localhost:${port}`);
 });

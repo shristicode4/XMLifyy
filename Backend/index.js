@@ -34,7 +34,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "hhttps://xmlifyy.onrender.com"],
     credentials: true,
   })
 );
@@ -133,6 +133,6 @@ app.get("/history", async (req, res) => {
 });
 
 // ✅ Start server
-app.listen(port, () => {
-  console.log(`🚀 Server running at http://localhost:${port}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server running at port ${PORT}`);
 });

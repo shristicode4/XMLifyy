@@ -61,6 +61,22 @@ const History = () => {
               <p>
                 <strong>File:</strong> {item.originalFileName}
               </p>
+              {item.pdfUrl && (
+                <div>
+                  <h4>{item.originalFileName}</h4>
+                  <iframe
+                    src={`http://localhost:3000${item.pdfUrl}`}
+                    width="100%"
+                    height="600px"
+                    style={{
+                      border: "1px solid #ccc",
+                      borderRadius: "8px",
+                      marginTop: "1rem",
+                    }}
+                    title="PDF Preview"
+                  />
+                </div>
+              )}
               <p>
                 <strong>Date:</strong>{" "}
                 {new Date(item.convertedAt).toLocaleString()}

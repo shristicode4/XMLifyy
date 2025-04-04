@@ -48,7 +48,7 @@ function Home() {
     formData.append("file", selectedFile);
     try {
       const response = await axios.post(
-        "http://localhost:3000/convertFile",
+        `${import.meta.env.VITE_API_BASE_URL}/convertFile`,
         formData
       );
 
@@ -64,7 +64,7 @@ function Home() {
 
       // an anchor tag to download the file
       const link = document.createElement("a");
-      link.href = `http://localhost:3000${downloadUrl}`;
+      link.href = `${import.meta.env.VITE_API_BASE_URL}${downloadUrl}`;
       link.setAttribute(
         "download",
         selectedFile.name.replace(/\.pdf$/, ".xml")

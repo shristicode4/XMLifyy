@@ -8,7 +8,9 @@ const History = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/history");
+        const res = await axios.get(
+          "${import.meta.env.VITE_API_BASE_URL}/history"
+        );
         setHistory(res.data);
       } catch (error) {
         console.error("Failed to fetch history:", error);
@@ -65,7 +67,7 @@ const History = () => {
                 <div>
                   <h4>{item.originalFileName}</h4>
                   <iframe
-                    src={`http://localhost:3000${item.pdfUrl}`}
+                    src={`${import.meta.env.VITE_API_BASE_URL}${item.pdfUrl}`}
                     width="100%"
                     height="600px"
                     style={{

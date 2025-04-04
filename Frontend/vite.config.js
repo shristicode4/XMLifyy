@@ -20,12 +20,13 @@ export default defineConfig({
     },
   },
   server: {
+    host: "0.0.0.0", // ✅ Required for Render to bind correctly
+    port: process.env.PORT || 10000, // ✅ Use Render-assigned PORT
     proxy: {
       "/api": {
         target: "https://xmlifyy.onrender.com",
         changeOrigin: true,
-        secure: true, // If backend uses HTTPS
+        secure: true, // If backend is on HTTPS
       },
-    },
   },
 });

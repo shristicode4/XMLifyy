@@ -46,6 +46,9 @@ const filesDir = path.join(__dirname, "files");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 if (!fs.existsSync(filesDir)) fs.mkdirSync(filesDir, { recursive: true });
 
+// Serves the 'uploads' folder so PDFs are publicly accessible
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 // ✅ Multer config
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -86,6 +89,7 @@ app.post("/convertFile", upload.single("file"), async (req, res) => {
     await History.create({
       originalFileName: req.file.originalname,
       xmlContent: xmlString,
+      pdfUrl: `/uploads/${req.file.filename}`,
     });
 
     res.json({

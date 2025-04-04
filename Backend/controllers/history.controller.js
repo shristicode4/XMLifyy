@@ -3,12 +3,14 @@ const History = require("../models/history.model");
 // Save conversion to DB
 exports.saveHistory = async (req, res) => {
   try {
+    const pdfUrl = `/files/${req.file.filename}`;
     const fileName = req.file.originalname;
     const convertedPath = `/uploads/${req.convertedFileName}`;
 
     const history = new History({
       originalFileName: fileName,
       convertedFilePath: convertedPath,
+      pdfUrl: pdfUrl,
     });
 
     await history.save();

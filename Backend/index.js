@@ -29,29 +29,35 @@ const historySchema = new mongoose.Schema({
 });
 const History = mongoose.model("History", historySchema);
 
-// ✅ Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
+// ✅ Allowed Origins
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:10000",
-  "https://xmlifyy-2.onrender.com", // ✅  frontend Render link here
+  "https://xmlifyy-2.onrender.com", // Frontend Render domain
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+// ✅ CORS Options
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
 
+// ✅ Middlewares
+app.use(cors(corsOptions)); // Enable CORS
+app.options("*", cors(corsOptions)); // Handle preflight OPTIONS
+app.use(express.json()); // Parse JSON body
+app.use(express.urlencoded({ extended: true })); // Parse form data
+
+// ✅ Routes
 app.use("/auth", authRoutes);
 
 // ✅ Ensure folders exist

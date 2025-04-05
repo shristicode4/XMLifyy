@@ -36,7 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:10000",
-  "https://xmlifyy-1.onrender.com", // ✅  frontend Render link here
+  "https://xmlifyy-2.onrender.com", // ✅  frontend Render link here
 ];
 
 app.use(

@@ -11,9 +11,18 @@ const History = () => {
         const res = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL}/history`
         );
-        setHistory(res.data);
+        console.log("📜 history data from backend:", res.data);
+
+        // Make sure the response is an array before setting state
+        if (Array.isArray(res.data)) {
+          setHistory(res.data);
+        } else {
+          console.error("Unexpected response format:", res.data);
+          setHistory([]);
+        }
       } catch (error) {
-        console.error("Failed to fetch history:", error);
+        console.error("❌ Failed to fetch history:", error);
+        setHistory([]);
       } finally {
         setLoading(false);
       }

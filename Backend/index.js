@@ -109,7 +109,7 @@ app.post("/convertFile", upload.single("file"), async (req, res) => {
     await History.create({
       originalFileName: req.file.originalname,
       xmlContent: xmlString,
-      pdfUrl: `/uploads/${req.file.filename}`,
+      //pdfUrl: `/uploads/${req.file.filename}`,
     });
 
     res.json({
